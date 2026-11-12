@@ -10,11 +10,13 @@ import CertificatesSection from '@/components/site/CertificatesSection';
 import ResumeSection from '@/components/site/ResumeSection';
 import ContactSection from '@/components/site/ContactSection';
 import Footer from '@/components/site/Footer';
+import RevealOnScroll from '@/components/site/RevealOnScroll';
 
 export default async function HomePage() {
   const { profile, education, experience, projects, certificates, settings } = await getContent();
   return (
     <>
+      <RevealOnScroll />
       <Header name={profile.full_name} />
       <main>
         <Hero profile={profile} />

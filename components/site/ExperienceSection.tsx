@@ -9,7 +9,7 @@ export default function ExperienceSection({ items }: { items: Experience[] }) {
         {items.length === 0 ? (
           <p className="empty">Belum ada data pengalaman.</p>
         ) : (
-          <div className="stack">
+          <div className="stack" data-stagger>
             {items.map((x) => (
               <article className="card exp-card" key={x.id}>
                 <div className="exp-meta">

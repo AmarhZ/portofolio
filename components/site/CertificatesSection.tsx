@@ -9,7 +9,7 @@ export default function CertificatesSection({ items }: { items: Certificate[] })
         {items.length === 0 ? (
           <p className="empty">Belum ada sertifikat.</p>
         ) : (
-          <div className="grid-cert">
+          <div className="grid-cert" data-stagger>
             {items.map((c) => (
               <article className="card cert" key={c.id}>
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#787F56" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

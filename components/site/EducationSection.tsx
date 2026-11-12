@@ -8,7 +8,7 @@ export default function EducationSection({ items }: { items: Education[] }) {
       {items.length === 0 ? (
         <p className="empty">Belum ada data pendidikan.</p>
       ) : (
-        <div className="timeline">
+        <div className="timeline" data-stagger>
           {items.map((e, i) => (
             <div className="tl-item" key={e.id}>
               <span className={i === 0 ? 'tl-dot tl-dot-main' : 'tl-dot'} />

@@ -4,7 +4,7 @@ export default function ResumeSection({ resumeUrl }: { resumeUrl: string }) {
   return (
     <section id="resume" className="container section">
       <SectionTitle title="resume" hint="// cv.pdf" />
-      <div className="resume-card">
+      <div className="resume-card" data-reveal>
         <div className="resume-text">
           <h3>CV terbaru, siap dibawa melamar.</h3>
           <p>Format PDF. Ringkasan pendidikan, pengalaman, keahlian, dan project dalam satu dokumen.</p>

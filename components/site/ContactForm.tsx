@@ -18,7 +18,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form className="form-card" action={action}>
+    <form className="form-card" action={action} data-reveal="right">
       <h3>Kirim pesan</h3>
       <label>
         Nama

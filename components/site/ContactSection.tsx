@@ -23,8 +23,8 @@ export default function ContactSection({ profile }: { profile: Profile }) {
       <div className="container section contact-grid">
         <div className="contact-info">
           <SectionTitle title="contact" hint="// say hello()" />
-          <p className="contact-lead">Tertarik bekerja sama, atau ada lowongan magang? Kirim pesan, saya akan membalas secepatnya.</p>
-          <ul className="contact-list">
+          <p className="contact-lead" data-reveal>Tertarik bekerja sama, atau ada lowongan magang? Kirim pesan, saya akan membalas secepatnya.</p>
+          <ul className="contact-list" data-stagger>
             {profile.email && (
               <Row
                 href={`mailto:${profile.email}`}

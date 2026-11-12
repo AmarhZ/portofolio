@@ -1,6 +1,17 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { getContent } from '@/lib/content';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#F6F0E3',
+};
+
+// Menandai bahwa JS aktif (animasi scroll hanya dipakai bila JS jalan).
+// Bila animasi gagal siap dalam 4 detik, konten dimunculkan apa adanya.
+const jsFlag =
+  "(function(){var d=document.documentElement;d.classList.add('js');setTimeout(function(){if(!d.classList.contains('rv-ready'))d.classList.add('rv-fail')},4000)})();";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getContent();
@@ -9,8 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: jsFlag }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link

@@ -14,7 +14,10 @@ export default function Hero({ profile }: { profile: Profile }) {
         <p className="prompt">
           &gt; Halo, dunia. Saya<span className="cursor" />
         </p>
-        <h1 className="hero-name">{profile.full_name}.</h1>
+        <h1 className="hero-name">
+          {profile.full_name.split(' ').slice(0, -1).join(' ')}{' '}
+          <span className="nobr">{profile.full_name.split(' ').slice(-1)[0]}.</span>
+        </h1>
         <p className="hero-role">{profile.profession}</p>
         {profile.tagline && <p className="hero-tagline">{profile.tagline}</p>}
         {profile.summary && <p className="hero-lead">{profile.summary}</p>}

@@ -28,9 +28,9 @@ export default function ProjectsSection({ items }: { items: Project[] }) {
       {shown.length === 0 ? (
         <p className="empty">Belum ada project.</p>
       ) : (
-        <div className="grid-cards">
+        <div className="grid-cards" key={filter}>
           {shown.map((p, i) => (
-            <article className="card proj" key={p.id}>
+            <article className="card proj" key={p.id} style={{ '--i': Math.min(i, 8) } as React.CSSProperties}>
               <div className="proj-thumb" style={{ background: tones[i % tones.length] }}>
                 {p.image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element

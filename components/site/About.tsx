@@ -7,11 +7,11 @@ export default function About({ profile }: { profile: Profile }) {
       <div className="container section">
         <SectionTitle title="about" hint="// who am i" />
         <div className="about-grid">
-          <div className="about-text">
+          <div className="about-text" data-stagger>
             {profile.bio_title && <p className="about-lead">{profile.bio_title}</p>}
             {profile.bio && <p className="about-body">{profile.bio}</p>}
           </div>
-          <div className="about-cards">
+          <div className="about-cards" data-stagger>
             <div className="panel">
               <h3>Keahlian</h3>
               <div className="chips">
