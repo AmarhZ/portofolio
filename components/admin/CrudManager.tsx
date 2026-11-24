@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TableConfig } from '@/lib/admin-config';
 import { saveRow, deleteRow } from '@/app/admin/actions';
@@ -16,6 +16,21 @@ export default function CrudManager({ config, rows }: { config: TableConfig; row
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
+
+  // Di layar kecil form tampil sebagai sheet layar penuh: kunci scroll halaman di belakangnya,
+  // dan Escape menutupnya.
+  useEffect(() => {
+    if (!editing) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setEditing(null);
+    window.addEventListener('keydown', onKey);
+    const small = window.matchMedia('(max-width: 900px)').matches;
+    const prev = document.body.style.overflow;
+    if (small) document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      if (small) document.body.style.overflow = prev;
+    };
+  }, [editing]);
 
   function open(row: Row | 'new') {
     setError('');
@@ -89,8 +104,13 @@ export default function CrudManager({ config, rows }: { config: TableConfig; row
         </section>
 
         {editing && (
-          <form className="adm-card adm-form" onSubmit={submit}>
-            <h2>{editing === 'new' ? 'Tambah baru' : 'Edit'}</h2>
+          <form className="adm-card adm-form adm-sheet" onSubmit={submit}>
+            <div className="sheet-head">
+              <h2>{editing === 'new' ? 'Tambah baru' : 'Edit'}</h2>
+              <button type="button" className="sheet-close" aria-label="Tutup form" onClick={() => setEditing(null)}>
+                ×
+              </button>
+            </div>
             {config.fields.map((f) => (
               <FieldInput key={f.name} field={f} value={values[f.name]} onChange={(v) => setValues((s) => ({ ...s, [f.name]: v }))} />
             ))}

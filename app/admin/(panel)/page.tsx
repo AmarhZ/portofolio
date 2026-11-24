@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import type { Message } from '@/lib/types';
 
-async function count(table: string, filter?: (q: any) => any) {
-  const sb = await createClient();
+type Sb = Awaited<ReturnType<typeof createClient>>;
+
+async function count(sb: Sb, table: string, filter?: (q: any) => any) {
   let q: any = sb.from(table).select('*', { count: 'exact', head: true });
   if (filter) q = filter(q);
   const { count: c } = await q;
@@ -13,10 +14,10 @@ async function count(table: string, filter?: (q: any) => any) {
 export default async function DashboardPage() {
   const sb = await createClient();
   const [projects, certs, exp, unread, recent] = await Promise.all([
-    count('projects'),
-    count('certificates'),
-    count('experience'),
-    count('messages', (q) => q.eq('is_read', false)),
+    count(sb, 'projects'),
+    count(sb, 'certificates'),
+    count(sb, 'experience'),
+    count(sb, 'messages', (q) => q.eq('is_read', false)),
     sb.from('messages').select('*').order('created_at', { ascending: false }).limit(4),
   ]);
   const messages = (recent.data ?? []) as Message[];

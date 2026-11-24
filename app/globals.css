@@ -224,8 +224,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 /* =====================================================================
    ADMIN
    ===================================================================== */
-.adm { min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; }
-.adm-side { flex: 0 0 270px; max-width: 100%; background: var(--deep); color: var(--clay); padding: 28px 20px; display: flex; flex-direction: column; gap: 28px; }
+.adm { min-height: 100vh; min-height: 100dvh; display: flex; align-items: flex-start; }
+.adm-top, .adm-scrim { display: none; }
+.adm-side { flex: 0 0 270px; position: sticky; top: 0; height: 100vh; height: 100dvh; overflow-y: auto; overscroll-behavior: contain; background: var(--deep); color: var(--clay); padding: 28px 20px; display: flex; flex-direction: column; gap: 28px; }
 .adm-brand { display: flex; align-items: center; gap: 12px; padding: 0 8px; }
 .adm-brand strong { display: block; font: 700 18px var(--head); }
 .adm-brand small { color: var(--sand); font-size: 13px; }
@@ -237,7 +238,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .badge-n { background: var(--clay); color: var(--deep); font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
 .adm-nav a.on .badge-n { background: var(--deep); color: var(--clay); }
 .adm-side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
-.adm-main { flex: 999 1 560px; min-width: 0; padding: 36px 40px; display: flex; flex-direction: column; gap: 28px; }
+.adm-main { flex: 1 1 0; min-width: 0; padding: 36px 40px; }
 .adm-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
 .adm-head h1 { font-size: 36px; letter-spacing: -1px; margin-bottom: 4px; }
 .adm-head p { color: var(--olive-dark); font-size: 16px; }
@@ -381,20 +382,36 @@ html.js:not(.rv-fail) [data-stagger] > *.is-in { opacity: 1; transform: none; }
 .form-card input:focus, .form-card textarea:focus, .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--deep); box-shadow: 0 0 0 4px rgba(120, 127, 86, 0.25); }
 .form-done { animation: pop 0.6s var(--ease) both; }
 
-/* Admin */
-.adm-main > * { animation: rise 0.55s var(--ease) both; }
-.adm-main > :nth-child(2) { animation-delay: 0.08s; }
-.adm-main > :nth-child(3) { animation-delay: 0.16s; }
-.adm-form { animation: slideIn 0.35s var(--ease) both; }
-.adm-nav a { transition: background 0.2s ease, color 0.2s ease; }
-.row { transition: background 0.15s ease; }
+/* Admin: animasi ringan (hanya opacity dan transform, tidak memicu gambar ulang berat) */
+.page-in { display: flex; flex-direction: column; gap: 28px; min-width: 0; animation: pageIn 0.28s var(--ease) both; }
+@keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes sheetUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes ping { 0% { transform: scale(1); opacity: 0.7; } 80%, 100% { transform: scale(1.9); opacity: 0; } }
+@keyframes skel { 50% { opacity: 0.45; } }
+.adm-form { animation: slideIn 0.3s var(--ease) both; }
+.adm-sheet { position: sticky; top: 24px; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); overflow-y: auto; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sheet-close { display: none; }
+.adm-nav a { transition: background-color 0.15s ease, color 0.15s ease; }
+.row { transition: background-color 0.15s ease; }
 .row:hover { background: var(--paper); border-radius: 12px; }
-.stat { transition: translate 0.25s ease, box-shadow 0.25s ease; }
-.stat:hover { translate: 0 -3px; box-shadow: 0 14px 30px -18px rgba(48, 54, 14, 0.5); }
-.quick a { transition: background 0.15s ease, translate 0.2s ease; }
+.stat { transition: translate 0.2s ease; }
+.stat:hover { translate: 0 -3px; }
+.quick a { transition: background-color 0.15s ease, translate 0.2s ease; }
 .quick a:hover { translate: 4px 0; }
-.badge-n { animation: pulse 2s ease-in-out infinite; }
+.badge-n { position: relative; }
+.badge-n::after { content: ''; position: absolute; inset: 0; border-radius: inherit; border: 2px solid var(--clay); opacity: 0; animation: ping 2.2s ease-out infinite; }
+.adm-nav a.on .badge-n::after { border-color: var(--deep); }
 .login-card { animation: pop 0.6s var(--ease) both; }
+
+/* Skeleton saat pindah menu */
+.skel { background: var(--clay); border-radius: 12px; animation: skel 1.2s ease-in-out infinite; }
+.skel-title { height: 40px; width: min(320px, 70%); }
+.skel-sub { height: 18px; width: min(460px, 90%); margin-top: 12px; }
+.skel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.skel-card { height: 96px; border-radius: 20px; }
+.skel-block { height: 280px; border-radius: 24px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Hormati preferensi "kurangi gerakan" */
 @media (prefers-reduced-motion: reduce) {
@@ -439,19 +456,31 @@ html.js:not(.rv-fail) [data-stagger] > *.is-in { opacity: 1; transform: none; }
   .nav-contact { display: flex; justify-content: center; margin-top: 14px; border-bottom: 0 !important; background: var(--deep); color: var(--clay) !important; border-radius: 999px; }
 }
 
-/* Tablet portrait + admin jadi satu kolom */
+/* Admin di tablet dan ponsel: top bar + drawer, form jadi sheet layar penuh */
 @media (max-width: 900px) {
-  .adm { flex-direction: column; flex-wrap: nowrap; }
-  .adm-side { flex: none; width: 100%; padding: 16px 16px 12px; gap: 12px; }
-  .adm-nav { flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 6px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
-  .adm-nav a { flex: none; white-space: nowrap; gap: 10px; }
-  .adm-side-foot { margin-top: 0; flex-direction: row; align-items: center; justify-content: space-between; }
-  .adm-main { flex: 1 1 auto; width: 100%; padding: 24px 16px; }
+  .adm { display: block; }
+  .adm-top { display: flex; position: sticky; top: 0; z-index: 30; height: 60px; align-items: center; justify-content: space-between; padding: 0 8px 0 16px; background: var(--deep); color: var(--clay); }
+  .adm-top .adm-brand { padding: 0; }
+  .adm-top .adm-brand strong { font-size: 17px; }
+  .adm-top .burger span { background: var(--clay); }
+  .adm-scrim { display: block; position: fixed; inset: 0; z-index: 45; background: rgba(24, 28, 6, 0.55); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+  .adm-scrim.open { opacity: 1; pointer-events: auto; }
+  .adm-side { position: fixed; top: 0; bottom: 0; left: 0; z-index: 50; width: min(84vw, 300px); height: auto; transform: translateX(-102%); visibility: hidden; transition: transform 0.3s var(--ease), visibility 0s 0.3s; }
+  .adm-side.open { transform: none; visibility: visible; transition: transform 0.3s var(--ease), visibility 0s; box-shadow: 24px 0 48px -24px rgba(0, 0, 0, 0.5); }
+  .adm-nav a { min-height: 48px; }
+  .adm-main { padding: 20px 16px 48px; }
+  .page-in { gap: 22px; }
   .adm-head h1 { font-size: 28px; }
+  .adm-head .btn { flex: 1 1 100%; }
   .adm-card { padding: 20px; border-radius: 20px; }
-  .stats { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .adm-grow, .quick { flex-basis: 100%; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .stat { padding: 18px; }
   .stat b { font-size: 34px; }
+  .adm-wide .btn-row { position: sticky; bottom: 0; margin: 8px -20px -20px; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); background: var(--clay); border-top: 1px solid rgba(48, 54, 14, 0.15); border-radius: 0 0 20px 20px; }
+  .adm-sheet { position: fixed; inset: 0; z-index: 60; max-height: none; border-radius: 0; border: 0; padding: 16px 16px 0; animation: sheetUp 0.3s var(--ease) both; }
+  .adm-sheet .btn-row { position: sticky; bottom: 0; margin: 8px -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--clay); border-top: 1px solid rgba(48, 54, 14, 0.15); }
+  .sheet-close { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 12px; background: rgba(48, 54, 14, 0.1); color: var(--deep); font-size: 26px; line-height: 1; cursor: pointer; }
 }
 
 /* Ponsel */
@@ -486,7 +515,6 @@ html.js:not(.rv-fail) [data-stagger] > *.is-in { opacity: 1; transform: none; }
   .resume-doc { flex-basis: 200px; width: 200px; margin: 0 auto; }
   .form-card { padding: 24px; border-radius: 24px; }
   .footer-in { flex-direction: column; text-align: center; justify-content: center; }
-  .adm-form { animation-name: rise; }
 }
 
 /* Ponsel kecil */
@@ -496,7 +524,8 @@ html.js:not(.rv-fail) [data-stagger] > *.is-in { opacity: 1; transform: none; }
   .filter { padding: 0 16px; }
   .strip-track { font-size: 15px; padding: 14px 0; }
   .btn { padding: 0 22px; }
-  .adm-side-foot { flex-direction: column; align-items: stretch; }
+  .row { flex-direction: column; align-items: flex-start; }
+  .row-actions { width: 100%; justify-content: flex-end; }
 }
 
 .nobr { white-space: nowrap; }

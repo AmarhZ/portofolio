@@ -57,3 +57,10 @@ Deploy ke Vercel: impor repo, isi dua environment variable yang sama dengan `.en
 - Akses tulis dijaga oleh RLS di database, bukan hanya oleh tampilan admin.
 - Jangan membuka pendaftaran pengguna publik di Supabase Auth.
 - Form kontak memakai honeypot sederhana; tambahkan CAPTCHA atau rate limit bila spam meningkat.
+
+## Performa admin
+
+- `vercel.json` memilih region **Singapore (sin1)** supaya server dekat dengan database Supabase. Ini faktor kecepatan terbesar. Pastikan region Supabase-mu juga Singapore.
+- `middleware.ts` memeriksa login dari cookie lokal (tanpa panggilan jaringan). Keamanan data tetap dijaga RLS, dan aksi simpan/hapus tetap memverifikasi pengguna di server.
+- `app/admin/(panel)/loading.tsx` menampilkan skeleton seketika saat pindah menu.
+- `next.config.mjs` menyimpan halaman yang baru dibuka selama 30 detik di browser (`staleTimes`). Cache otomatis dibuang setelah simpan/hapus. Pesan baru dari form kontak bisa tertunda sampai 30 detik muncul bila kamu bolak-balik ke halaman Messages.

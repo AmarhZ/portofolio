@@ -24,9 +24,14 @@ export async function middleware(request: NextRequest) {
     },
   });
 
+  // getSession() membaca cookie lokal (tanpa panggilan ke server Supabase), jauh lebih cepat
+  // daripada getUser() yang menunggu respons jaringan di setiap pindah halaman.
+  // Ini hanya untuk mengarahkan halaman. Keamanan data tetap dijaga RLS di database,
+  // dan setiap aksi simpan/hapus memverifikasi pengguna lewat getUser() di server.
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session ? true : null;
 
   const { pathname } = request.nextUrl;
   const isLogin = pathname.startsWith('/admin/login');
