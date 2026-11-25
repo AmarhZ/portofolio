@@ -20,6 +20,16 @@ export default function FieldInput({ field, value, onChange }: Props) {
     setUploading(true);
     setUploadError('');
     try {
+      // Validasi di browser supaya pesan error jelas (database juga menolak tipe/ukuran yang tidak sesuai).
+      const allowed =
+        field.type === 'image'
+          ? ['image/png', 'image/jpeg', 'image/webp', 'image/gif']
+          : ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+      if (!allowed.includes(file.type)) {
+        throw new Error(field.type === 'image' ? 'Gunakan gambar PNG, JPG, WebP, atau GIF.' : 'Gunakan file PDF atau gambar PNG/JPG/WebP.');
+      }
+      if (file.size > 10 * 1024 * 1024) throw new Error('Ukuran file maksimal 10 MB.');
+
       const sb = createClient();
       const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
       const path = `${field.folder ?? 'misc'}/${Date.now()}-${safe}`;
@@ -86,7 +96,7 @@ export default function FieldInput({ field, value, onChange }: Props) {
             <input
               type="file"
               hidden
-              accept={field.type === 'image' ? 'image/*' : '.pdf,image/*'}
+              accept={field.type === 'image' ? 'image/png,image/jpeg,image/webp,image/gif' : 'application/pdf,image/png,image/jpeg,image/webp'}
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 if (f) void upload(f);

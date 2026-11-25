@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { getContent } from '@/lib/content';
+import { siteUrl } from '@/lib/site';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -14,8 +15,30 @@ const jsFlag =
   "(function(){var d=document.documentElement;d.classList.add('js');setTimeout(function(){if(!d.classList.contains('rv-ready'))d.classList.add('rv-fail')},4000)})();";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { settings } = await getContent();
-  return { title: settings.site_title, description: settings.meta_description };
+  const { settings, profile } = await getContent();
+  return {
+    metadataBase: new URL(siteUrl),
+    title: { default: settings.site_title, template: `%s · ${profile.full_name}` },
+    description: settings.meta_description,
+    applicationName: profile.full_name,
+    authors: [{ name: profile.full_name, url: siteUrl }],
+    creator: profile.full_name,
+    alternates: { canonical: '/' },
+    robots: { index: true, follow: true },
+    openGraph: {
+      type: 'website',
+      url: siteUrl,
+      siteName: profile.full_name,
+      title: settings.site_title,
+      description: settings.meta_description,
+      locale: 'id_ID',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: settings.site_title,
+      description: settings.meta_description,
+    },
+  };
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

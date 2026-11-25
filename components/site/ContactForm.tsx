@@ -1,12 +1,15 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { sendMessage, type ContactState } from '@/app/actions';
 
 const initial: ContactState = { ok: false, error: '' };
 
 export default function ContactForm() {
   const [state, action, pending] = useActionState(sendMessage, initial);
+  // Waktu form dibuka, dipakai server untuk menolak kiriman otomatis yang terlalu cepat.
+  const [openedAt, setOpenedAt] = useState('');
+  useEffect(() => setOpenedAt(String(Date.now())), []);
 
   if (state.ok) {
     return (
@@ -34,6 +37,7 @@ export default function ContactForm() {
       </label>
       {/* Honeypot anti-spam: disembunyikan dari pengguna */}
       <input name="website" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hp" />
+      <input name="t" type="hidden" value={openedAt} readOnly />
       {state.error && (
         <p className="form-error" role="alert">
           {state.error}

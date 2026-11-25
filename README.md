@@ -64,3 +64,21 @@ Deploy ke Vercel: impor repo, isi dua environment variable yang sama dengan `.en
 - `middleware.ts` memeriksa login dari cookie lokal (tanpa panggilan jaringan). Keamanan data tetap dijaga RLS, dan aksi simpan/hapus tetap memverifikasi pengguna di server.
 - `app/admin/(panel)/loading.tsx` menampilkan skeleton seketika saat pindah menu.
 - `next.config.mjs` menyimpan halaman yang baru dibuka selama 30 detik di browser (`staleTimes`). Cache otomatis dibuang setelah simpan/hapus. Pesan baru dari form kontak bisa tertunda sampai 30 detik muncul bila kamu bolak-balik ke halaman Messages.
+
+## SEO & pratinjau link
+
+- Domain dibaca dari `NEXT_PUBLIC_SITE_URL` (opsional; bawaannya `https://portofolio-67.vercel.app`). Isi di Vercel bila nanti memakai domain sendiri, lalu Redeploy.
+- Otomatis tersedia: `/sitemap.xml`, `/robots.txt`, favicon (`/icon`, `/apple-icon`), gambar pratinjau Open Graph/Twitter (`/opengraph-image`, `/twitter-image`), data terstruktur JSON-LD (Person), dan halaman 404.
+- Nama dan profesi pada gambar pratinjau diambil dari **Manage Profile**. WhatsApp/LinkedIn menyimpan cache pratinjau, jadi link lama mungkin butuh beberapa waktu untuk berubah.
+- Halaman `/admin` memakai `noindex` dan di-Disallow pada robots.txt.
+
+## Keamanan
+
+1. Di Supabase → SQL Editor, jalankan `supabase/schema.sql` (jika belum), lalu `supabase/security.sql`.
+   **Ganti dulu** `GANTI_DENGAN_EMAILMU@gmail.com` di baris atas `security.sql` dengan email akun admin. Jika lupa, skrip berhenti dengan error.
+   Jika email salah, admin tidak bisa menyimpan data. Perbaiki dengan menjalankan `insert into admin_emails values ('emailmu@...');` (huruf kecil).
+2. Yang dilakukan `security.sql`: hanya email di `admin_emails` yang bisa mengubah data atau mengunggah file; form kontak dibatasi di database (maks 3 pesan/email per 10 menit, pesan identik ditolak 1 jam, maks 60 pesan/jam total); bucket `media` dibatasi 10 MB dan PNG/JPG/WebP/GIF/PDF (tanpa SVG).
+3. Form kontak juga memakai honeypot dan jeda minimal pengisian.
+4. Header keamanan (nosniff, X-Frame-Options, Referrer-Policy, Permissions-Policy, HSTS) diatur di `next.config.mjs`.
+5. Belum ada: Content-Security-Policy, CAPTCHA (mis. Turnstile), dan pembatasan per IP.
+6. Jika `sb_secret_...` / service_role key pernah terlihat orang lain, putar (rotate) di Supabase → Project Settings → API Keys. Website ini hanya memakai anon/publishable key.

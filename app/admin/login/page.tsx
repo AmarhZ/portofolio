@@ -16,9 +16,21 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const { error } = await createClient().auth.signInWithPassword({ email, password });
+    const sb = createClient();
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      setLoading(false);
+      return setError('Email atau password salah.');
+    }
+    // Hanya email yang terdaftar di tabel admin_emails (supabase/security.sql) yang boleh masuk.
+    // Bila fungsi is_admin belum dibuat (security.sql belum dijalankan), pengecekan dilewati.
+    const { data: isAdmin, error: rpcError } = await sb.rpc('is_admin');
+    if (!rpcError && isAdmin === false) {
+      await sb.auth.signOut();
+      setLoading(false);
+      return setError('Akun ini tidak memiliki akses admin.');
+    }
     setLoading(false);
-    if (error) return setError('Email atau password salah.');
     router.push('/admin');
     router.refresh();
   }

@@ -11,11 +11,32 @@ import ResumeSection from '@/components/site/ResumeSection';
 import ContactSection from '@/components/site/ContactSection';
 import Footer from '@/components/site/Footer';
 import RevealOnScroll from '@/components/site/RevealOnScroll';
+import { siteUrl } from '@/lib/site';
+
+const absolute = (u: string) => (/^https?:\/\//.test(u) ? u : `https://${u}`);
 
 export default async function HomePage() {
   const { profile, education, experience, projects, certificates, settings } = await getContent();
+  // Data terstruktur: membantu mesin pencari mengenali namamu sebagai orang/profesi.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: profile.full_name,
+    jobTitle: profile.profession,
+    url: siteUrl,
+    image: new URL(profile.avatar_url || '/images/profile.png', siteUrl).toString(),
+    sameAs: [profile.linkedin, profile.github, profile.instagram].filter(Boolean).map(absolute),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
+      <a className="skip" href="#home">
+        Lewati ke konten
+      </a>
       <RevealOnScroll />
       <Header name={profile.full_name} />
       <main>
