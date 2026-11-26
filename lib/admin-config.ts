@@ -7,6 +7,7 @@ export type Field = {
   help?: string;
   required?: boolean;
   folder?: string; // subfolder di bucket "media"
+  rows?: number; // tinggi textarea
 };
 
 export type TableConfig = {
@@ -58,8 +59,18 @@ export const listConfigs: Record<string, TableConfig> = {
     subKey: 'category',
     fields: [
       { name: 'title', label: 'Nama project', type: 'text', required: true },
+      { name: 'slug', label: 'Alamat halaman (slug)', type: 'text', placeholder: 'otomatis dari nama project', help: 'Tampil sebagai /projects/alamat-ini. Kosongkan agar dibuat otomatis. Setelah dibagikan, sebaiknya tidak diubah.' },
       { name: 'category', label: 'Kategori', type: 'select', options: ['Web', 'Mobile', 'UI/UX', 'Lainnya'] },
-      { name: 'description', label: 'Deskripsi', type: 'textarea' },
+      { name: 'description', label: 'Deskripsi singkat', type: 'textarea', help: 'Tampil di kartu project dan sebagai ringkasan di halaman detail.' },
+      {
+        name: 'details',
+        label: 'Detail project (studi kasus)',
+        type: 'textarea',
+        rows: 12,
+        help: 'Tampil di halaman detail. Pisahkan paragraf dengan baris kosong. "## Judul" untuk subjudul, "- " untuk daftar, **tebal**, `kode`, dan [teks](https://link).',
+      },
+      { name: 'role', label: 'Peran kamu', type: 'text', placeholder: 'Full-stack Developer' },
+      { name: 'year', label: 'Tahun', type: 'text', placeholder: '2025' },
       { name: 'image_url', label: 'Gambar project', type: 'image', folder: 'projects' },
       { name: 'tech', label: 'Teknologi', type: 'tags', help: 'Pisahkan dengan koma.' },
       { name: 'demo_url', label: 'Link demo', type: 'url', placeholder: 'https://' },

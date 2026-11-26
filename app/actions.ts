@@ -1,6 +1,8 @@
 'use server';
 
+import { after } from 'next/server';
 import { createClient, hasSupabase } from '@/lib/supabase/server';
+import { notifyNewMessage } from '@/lib/notify';
 
 export type ContactState = { ok: boolean; error: string };
 
@@ -41,5 +43,7 @@ export async function sendMessage(_prev: ContactState, formData: FormData): Prom
     const known = Object.keys(DB_ERRORS).find((k) => error.message.includes(k));
     return { ok: false, error: known ? DB_ERRORS[known] : 'Pesan gagal dikirim. Coba lagi nanti.' };
   }
+  // Email pemberitahuan dikirim setelah balasan ke pengunjung, jadi tidak memperlambat form.
+  after(() => notifyNewMessage({ name, email, message }));
   return { ok: true, error: '' };
 }

@@ -12,6 +12,7 @@ import ContactSection from '@/components/site/ContactSection';
 import Footer from '@/components/site/Footer';
 import RevealOnScroll from '@/components/site/RevealOnScroll';
 import { siteUrl } from '@/lib/site';
+import { withSlugs } from '@/lib/projects';
 
 const absolute = (u: string) => (/^https?:\/\//.test(u) ? u : `https://${u}`);
 
@@ -45,7 +46,7 @@ export default async function HomePage() {
         <About profile={profile} />
         <EducationSection items={education} />
         <ExperienceSection items={experience} />
-        <ProjectsSection items={projects} />
+        <ProjectsSection items={withSlugs(projects)} />
         <CertificatesSection items={certificates} />
         <ResumeSection resumeUrl={profile.resume_url} />
         <ContactSection profile={profile} />

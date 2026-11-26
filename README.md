@@ -82,3 +82,24 @@ Deploy ke Vercel: impor repo, isi dua environment variable yang sama dengan `.en
 4. Header keamanan (nosniff, X-Frame-Options, Referrer-Policy, Permissions-Policy, HSTS) diatur di `next.config.mjs`.
 5. Belum ada: Content-Security-Policy, CAPTCHA (mis. Turnstile), dan pembatasan per IP.
 6. Jika `sb_secret_...` / service_role key pernah terlihat orang lain, putar (rotate) di Supabase → Project Settings → API Keys. Website ini hanya memakai anon/publishable key.
+
+## Halaman detail project
+
+- Setiap project punya halaman sendiri di `/projects/alamat-project`. Kartu di bagian Projects otomatis menautkan ke sana.
+- **Jalankan sekali** `supabase/projects-detail.sql` di Supabase → SQL Editor. Skrip ini menambah kolom `slug`, `details`, `role`, `year`, memberi slug pada project yang sudah ada, dan aman dijalankan berulang. Sebelum dijalankan, menyimpan project dari admin akan menampilkan pesan yang mengarahkan ke skrip ini.
+- Di **Manage Projects** ada kolom baru: Alamat halaman (slug, otomatis bila kosong), Detail project, Peran, Tahun. Mengganti nama project tidak mengubah slug, jadi link yang sudah dibagikan tetap berlaku.
+- Format kolom Detail: baris kosong memisahkan paragraf; `## Subjudul`; `### Subjudul kecil`; daftar dengan `- ` atau `1. `; `**tebal**`; `` `kode` ``; `[teks](https://link)`. HTML mentah tidak dijalankan.
+- Tiap halaman punya judul, deskripsi, gambar pratinjau Open Graph sendiri, dan masuk ke `sitemap.xml`. Project dengan "Tampilkan di website" nonaktif akan 404.
+
+## Notifikasi email pesan baru
+
+Saat ada pesan dari form kontak, email pemberitahuan dikirim lewat [Resend](https://resend.com). Pesan tetap tersimpan di database walaupun email gagal terkirim.
+
+1. Daftar di resend.com (gratis) → **API Keys** → buat key.
+2. Di Vercel → Settings → Environment Variables, tambahkan:
+   - `RESEND_API_KEY` = key tadi
+   - `NOTIFY_EMAIL_TO` = email tempat notifikasi diterima (boleh beberapa, pisahkan koma)
+   - `NOTIFY_EMAIL_FROM` (opsional) = mis. `Portofolio <halo@domainmu.com>`, hanya jika domain sudah diverifikasi di Resend
+3. Redeploy.
+
+Tanpa domain sendiri, Resend hanya mau mengirim ke email yang dipakai mendaftar akun Resend, jadi daftarkan dengan email yang sama dengan `NOTIFY_EMAIL_TO`. Tombol Reply di email langsung membalas pengirim pesan. Jika dua variabel pertama kosong, fitur ini dilewati. Batas 60 pesan/jam dari `security.sql` juga membatasi jumlah email.

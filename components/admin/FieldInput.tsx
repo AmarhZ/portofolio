@@ -58,7 +58,7 @@ export default function FieldInput({ field, value, onChange }: Props) {
       <label htmlFor={id}>{field.label}</label>
 
       {field.type === 'textarea' && (
-        <textarea id={id} rows={4} value={str} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} />
+        <textarea id={id} rows={field.rows ?? 4} value={str} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} />
       )}
 
       {field.type === 'select' && (

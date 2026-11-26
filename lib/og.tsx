@@ -78,3 +78,47 @@ export async function renderOg() {
     { width: 1200, height: 630 }
   );
 }
+
+// Gambar pratinjau untuk halaman detail project.
+export async function renderProjectOg(project: { title: string; category: string; tech: string[] }) {
+  const { profile } = await getContent();
+  const title = project.title.length > 70 ? `${project.title.slice(0, 69)}…` : project.title;
+  const tech = project.tech.slice(0, 4);
+
+  return new ImageResponse(
+    (
+      <div style={{ width: '100%', height: '100%', display: 'flex', position: 'relative', background: '#F6F0E3', color: '#30360E', fontFamily: 'sans-serif' }}>
+        <div style={{ position: 'absolute', right: -140, bottom: -170, width: 560, height: 560, borderRadius: 280, background: '#E2D4B9', display: 'flex' }} />
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%', height: '100%', padding: '64px 72px' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, borderRadius: 18, background: '#30360E', color: '#E2D4B9', fontSize: 40, fontWeight: 700 }}>
+              a.
+            </div>
+            <div style={{ display: 'flex', marginLeft: 20, fontSize: 28, color: '#4E5532' }}>{profile.full_name}</div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 940 }}>
+            <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', background: '#30360E', color: '#E2D4B9', fontSize: 24, padding: '8px 22px', borderRadius: 999 }}>{project.category}</div>
+            </div>
+            <div style={{ display: 'flex', fontSize: 76, fontWeight: 700, lineHeight: 1.08, letterSpacing: -2, marginTop: 26 }}>{title}</div>
+            {tech.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: 28 }}>
+                {tech.map((t) => (
+                  <div key={t} style={{ display: 'flex', fontSize: 26, color: '#4E5532', border: '2px solid #787F56', borderRadius: 999, padding: '6px 20px', marginRight: 12 }}>
+                    {t}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', background: '#30360E', color: '#E2D4B9', fontSize: 26, padding: '12px 26px', borderRadius: 999 }}>{siteHost}</div>
+          </div>
+        </div>
+      </div>
+    ),
+    { width: 1200, height: 630 }
+  );
+}

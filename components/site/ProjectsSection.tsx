@@ -1,13 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { Project } from '@/lib/types';
+import Link from 'next/link';
+import type { ProjectWithSlug } from '@/lib/projects';
 import SectionTitle from './SectionTitle';
 
 const glyphs = ['</>', '{ }', '>_', '01'];
 const tones = ['#30360E', '#787F56', '#4E5532', '#5E6640'];
 
-export default function ProjectsSection({ items }: { items: Project[] }) {
+export default function ProjectsSection({ items }: { items: ProjectWithSlug[] }) {
   const [filter, setFilter] = useState('Semua');
   const cats = useMemo(() => ['Semua', ...Array.from(new Set(items.map((p) => p.category)))], [items]);
   const shown = items.filter((p) => filter === 'Semua' || p.category === filter);
@@ -30,7 +31,7 @@ export default function ProjectsSection({ items }: { items: Project[] }) {
       ) : (
         <div className="grid-cards" key={filter}>
           {shown.map((p, i) => (
-            <article className="card proj" key={p.id} style={{ '--i': Math.min(i, 8) } as React.CSSProperties}>
+            <article className="card proj proj-link" key={p.id} style={{ '--i': Math.min(i, 8) } as React.CSSProperties}>
               <div className="proj-thumb" style={{ background: tones[i % tones.length] }}>
                 {p.image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -43,7 +44,11 @@ export default function ProjectsSection({ items }: { items: Project[] }) {
                 <span className="proj-cat">{p.category}</span>
               </div>
               <div className="proj-body">
-                <h3>{p.title}</h3>
+                <h3>
+                  <Link href={`/projects/${p.slug}`} className="proj-title">
+                    {p.title}
+                  </Link>
+                </h3>
                 <p>{p.description}</p>
                 <div className="chips chips-sm">
                   {p.tech.map((t) => (
@@ -53,6 +58,9 @@ export default function ProjectsSection({ items }: { items: Project[] }) {
                   ))}
                 </div>
                 <div className="proj-links">
+                  <span className="proj-more" aria-hidden="true">
+                    Lihat detail →
+                  </span>
                   {p.demo_url && (
                     <a href={p.demo_url} target="_blank" rel="noopener noreferrer">
                       Live demo ↗

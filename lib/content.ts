@@ -1,6 +1,7 @@
 import { createClient, hasSupabase } from './supabase/server';
 import { defaults } from './defaults';
 import type { Content } from './types';
+import { withSlugs } from './projects';
 
 // Buang nilai null supaya tidak menimpa nilai default.
 function clean<T extends object>(base: T, incoming: Partial<T> | null | undefined): T {
@@ -35,4 +36,17 @@ export async function getContent(): Promise<Content> {
   } catch {
     return defaults;
   }
+}
+
+// Satu project beserta project sebelum/sesudahnya (untuk navigasi di halaman detail).
+export async function getProjectBySlug(slug: string) {
+  const content = await getContent();
+  const list = withSlugs(content.projects);
+  const i = list.findIndex((p) => p.slug === slug);
+  return {
+    content,
+    project: i >= 0 ? list[i] : null,
+    prev: i > 0 ? list[i - 1] : null,
+    next: i >= 0 && i < list.length - 1 ? list[i + 1] : null,
+  };
 }

@@ -9,6 +9,15 @@ const SINGLE_TABLES = ['profile', 'site_settings'];
 
 type Result = { error?: string };
 
+// Kolom baru (mis. slug) belum ada → arahkan ke SQL yang perlu dijalankan.
+function friendly(message: string) {
+  if (/column|schema cache/i.test(message) && /(slug|details|role|year)/i.test(message)) {
+    return 'Kolom baru belum ada di database. Jalankan supabase/projects-detail.sql di Supabase → SQL Editor, lalu coba simpan lagi.';
+  }
+  if (/projects_slug_key|duplicate key/i.test(message)) return 'Alamat halaman (slug) sudah dipakai project lain.';
+  return message;
+}
+
 async function authed() {
   const sb = await createClient();
   const {
@@ -27,6 +36,7 @@ function sanitize(payload: Record<string, unknown>) {
 
 function refresh(table: string) {
   revalidatePath('/');
+  if (table === 'projects') revalidatePath('/projects/[slug]', 'page');
   revalidatePath('/admin', 'layout');
   revalidatePath(`/admin/${table}`);
 }
@@ -36,7 +46,7 @@ export async function saveRow(table: string, id: string | null, payload: Record<
   const sb = await authed();
   const data = sanitize(payload);
   const { error } = id ? await sb.from(table).update(data).eq('id', id) : await sb.from(table).insert(data);
-  if (error) return { error: error.message };
+  if (error) return { error: friendly(error.message) };
   refresh(table);
   return {};
 }

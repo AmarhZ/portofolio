@@ -48,6 +48,11 @@ export type Project = {
   repo_url: string;
   published: boolean;
   sort_order: number;
+  // Kolom halaman detail (supabase/projects-detail.sql). Opsional agar aman bila SQL belum dijalankan.
+  slug?: string;
+  details?: string;
+  role?: string;
+  year?: string;
 };
 
 export type Certificate = {
